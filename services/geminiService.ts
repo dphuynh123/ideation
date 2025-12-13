@@ -5,11 +5,11 @@ import type { MindMapData, UserInput } from '../types';
 // It's assumed that `process.env.API_KEY` is securely managed in the deployment environment.
 const API_KEY = process.env.API_KEY;
 
-if (!API_KEY) {
-  // In a real app, you might want to show a more user-friendly error
-  // or disable the feature if the key is not available.
-  console.error("API_KEY is not set in environment variables.");
-}
+// if (!API_KEY) {
+//   // In a real app, you might want to show a more user-friendly error
+//   // or disable the feature if the key is not available.
+//   console.error("API_KEY is not set in environment variables.");
+// }
 
 const ai = new GoogleGenAI({ apiKey: API_KEY });
 

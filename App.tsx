@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import InputForm from './components/InputForm';
 import MindMapView from './components/MindMapView';
-import { generateBusinessMindMap } from './services/geminiService';
+// import { generateBusinessMindMap } from './services/geminiService';
 import type { MindMapData, UserInput, BusinessIdea, Problem } from './types';
 import { 
     LogoIcon, SparklesIcon, SunIcon, MoonIcon, PlusIcon, 
@@ -31,7 +31,9 @@ const App: React.FC = () => {
     setIsModalOpen(false); // Close modal on submit
 
     try {
-      const data = await generateBusinessMindMap(userInput, language);
+    //   const data = await generateBusinessMindMap(userInput, language);
+        const data = null;
+
       setMindMapData(data);
       setSelectedNode({ type: 'central', title: data.centralTopic, id: 'central-topic' });
     } catch (err) {

@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
     return {
       base: '/ideation',
       server: {
-        port: 3300,
+        port: 3400,
         host: '0.0.0.0',
       },
       plugins: [react()],
