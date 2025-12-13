@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  ideation:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ideation
+    ports:
+      - "3300:80"
+    restart: always
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s

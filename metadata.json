@@ -1,0 +1,5 @@
+{
+  "name": "Business Idea Mindmap Generator",
+  "description": "An application that takes user input about their interests and skills to generate a mind map of potential problems and corresponding business ideas using the Gemini API.",
+  "requestFramePermissions": []
+}
