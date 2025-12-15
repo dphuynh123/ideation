@@ -28,6 +28,9 @@ const Homepage: React.FC<HomepageProps> = ({ onGetStarted, t }) => {
         {/* <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-6 rounded-full text-sm transition">
           Login
         </button> */}
+        <button onClick={onGetStarted} className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-6 rounded-full text-sm transition">
+          Get Started
+        </button>
       </header>
 
       {/* Hero Section */}
