@@ -104,9 +104,9 @@ const MindMapPage: React.FC = () => {
         <div className="flex items-center gap-4">
           <LanguageSwitcher />
           <ThemeSwitcher/>
-          <button className="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold py-2 px-5 rounded-full text-sm transition shadow-sm">
+          {/* <button className="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold py-2 px-5 rounded-full text-sm transition shadow-sm">
             {t('saveProject')}
-          </button>
+          </button> */}
           <div className="h-9 w-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm">
             <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User Avatar" className="h-full w-full object-cover" />
           </div>

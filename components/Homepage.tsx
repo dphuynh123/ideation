@@ -21,13 +21,13 @@ const Homepage: React.FC<HomepageProps> = ({ onGetStarted, t }) => {
         </div>
         
         <nav className="hidden md:flex items-center gap-8">
-          <Link to="#how-it-works" className="text-sm font-medium text-gray-600 hover:text-gray-900">How It Works</Link>
-          <Link to="#pricing" className="text-sm font-medium text-gray-600 hover:text-gray-900">Pricing</Link>
+          {/* <Link to="#how-it-works" className="text-sm font-medium text-gray-600 hover:text-gray-900">How It Works</Link>
+          <Link to="#pricing" className="text-sm font-medium text-gray-600 hover:text-gray-900">Pricing</Link> */}
         </nav>
         
-        <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-6 rounded-full text-sm transition">
+        {/* <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-6 rounded-full text-sm transition">
           Login
-        </button>
+        </button> */}
       </header>
 
       {/* Hero Section */}
