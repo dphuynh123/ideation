@@ -221,7 +221,7 @@ const MindMapPage: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 dark:border-slate-700 scale-100 animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800">
               <div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t('headerTitle')}</h2>
+                <h2 className="text-xl font-bold text-slate-900 text-yellow-400">{t('headerTitle')}</h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400">{t('headerDescription')}</p>
               </div>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
