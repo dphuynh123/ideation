@@ -220,7 +220,7 @@ const Homepage: React.FC<HomepageProps> = ({ onGetStarted, t }) => {
             <div className="bg-yellow-400 rounded-full p-1 text-black">
               <LogoIcon className="h-3 w-3" />
             </div>
-            <span>© 2024 IdeaGem. All rights reserved.</span>
+            <span>© 2024 Ideation. </span>
           </div>
           <div className="flex items-center gap-6">
             <a href="#" className="hover:text-gray-700">Privacy</a>
