@@ -91,7 +91,7 @@ const MindMapPage: React.FC = () => {
       <header className={clsx(`absolute top-0 left-0 right-0 z-20 h-16 bg-white/80 ${theme == 'dark' && `dark:bg-slate-900/80`} backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-6`)}>
         <div className="flex items-center gap-2">
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/home')}
             className="flex items-center gap-2 hover:opacity-80 transition"
           >
             <div className="bg-yellow-400 rounded-full p-1.5 text-black">
