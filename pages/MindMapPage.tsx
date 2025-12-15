@@ -119,7 +119,7 @@ const MindMapPage: React.FC = () => {
         {/* Mind Map View (Left/Center) */}
         <div className="flex-1 relative h-full w-full overflow-hidden">
           {isLoading && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm z-50">
+            <div className="absolute inset-0 flex flex-col items-center justify-center  backdrop-blur-sm z-50">
               <SparklesIcon className="h-12 w-12 text-yellow-500 animate-spin mb-4" />
               <h2 className="text-lg font-semibold">{t('generatingButton')}</h2>
             </div>
