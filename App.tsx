@@ -7,7 +7,7 @@ const App: React.FC = () => {
   return (
     <BrowserRouter basename='/ideation'>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/mindmap" element={<MindMapPage />} />
       </Routes>
     </BrowserRouter>
