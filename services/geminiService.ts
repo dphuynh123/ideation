@@ -4,7 +4,7 @@ import apiClient from "./client";
 
 // IMPORTANT: Do not expose this key publicly.
 // It's assumed that `process.env.API_KEY` is securely managed in the deployment environment.
-const API_KEY = process.env.API_KEY;
+// const API_KEY = process.env.API_KEY;
 
 // if (!API_KEY) {
 //   // In a real app, you might want to show a more user-friendly error
@@ -12,7 +12,7 @@ const API_KEY = process.env.API_KEY;
 //   console.error("API_KEY is not set in environment variables.");
 // }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+// const ai = new GoogleGenAI({ apiKey: API_KEY });
 
 const mindMapSchema = {
   type: Type.OBJECT,
