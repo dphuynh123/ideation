@@ -38,8 +38,8 @@ const MindMapPage: React.FC = () => {
       setMindMapData(data);
       setSelectedNode({ type: 'central', title: data.centralTopic, id: 'central-topic' });
     } catch (err) {
-      console.error(err);
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
+      // console.error(err);
+      // setError(err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
       setIsModalOpen(true);
     } finally {
       setIsLoading(false);
