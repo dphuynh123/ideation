@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { MindMapData, UserInput } from '../types';
+import apiClient from "./client";
 
 // IMPORTANT: Do not expose this key publicly.
 // It's assumed that `process.env.API_KEY` is securely managed in the deployment environment.
@@ -99,31 +100,35 @@ const createPrompt = (userInput: UserInput, language: 'en' | 'vi'): string => {
 
 
 export const generateBusinessMindMap = async (userInput: UserInput, language: 'en' | 'vi'): Promise<MindMapData> => {
-  if (!API_KEY) {
-    throw new Error("API key is not configured. Please contact support.");
-  }
+  // if (!API_KEY) {
+  //   throw new Error("API key is not configured. Please contact support.");
+  // }
 
   const prompt = createPrompt(userInput, language);
 
   try {
-    const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: mindMapSchema,
-            temperature: 0.8,
-            topP: 0.95,
-        },
-    });
+    // const response = await ai.models.generateContent({
+    //     model: "gemini-2.5-flash",
+    //     contents: prompt,
+    //     config: {
+    //         responseMimeType: "application/json",
+    //         responseSchema: mindMapSchema,
+    //         temperature: 0.8,
+    //         topP: 0.95,
+    //     },
+    // });
 
-    const jsonText = response.text;
-    if (!jsonText) {
-        throw new Error("Received an empty response from the API.");
-    }
+    const response = await apiClient.post("/gen",{prompt:prompt,responseSchema:mindMapSchema})
+
+    return response.data
+
+    // const jsonText = response.text;
+    // if (!jsonText) {
+    //     throw new Error("Received an empty response from the API.");
+    // }
     
-    // The response text should already be a valid JSON string
-    return JSON.parse(jsonText) as MindMapData;
+    // // The response text should already be a valid JSON string
+    // return JSON.parse(jsonText) as MindMapData;
 
   } catch (error) {
     console.error("Error calling Gemini API:", error);

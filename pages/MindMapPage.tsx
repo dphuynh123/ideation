@@ -10,6 +10,7 @@ import {
 } from '../components/Icons';
 import { translations } from '../translations';
 import clsx from 'clsx';
+import { generateBusinessMindMap } from '@/services/geminiService';
 
 type SelectedNodeType = { type: 'central' | 'problem' | 'idea'; title: string; description?: string; id: string } | null;
 
@@ -32,8 +33,7 @@ const MindMapPage: React.FC = () => {
     setIsModalOpen(false);
 
     try {
-      // const data = await generateBusinessMindMap(userInput, language);
-      const data = null;
+      const data = await generateBusinessMindMap(userInput, language);
 
       setMindMapData(data);
       setSelectedNode({ type: 'central', title: data.centralTopic, id: 'central-topic' });
@@ -166,7 +166,7 @@ const MindMapPage: React.FC = () => {
               <HistoryIcon className="h-4 w-4 text-slate-500" /> {t('versionHistory')}
             </button>
 
-            <div className="pt-4 pb-2 px-2">
+            {/* <div className="pt-4 pb-2 px-2">
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">{t('contextImage')}</p>
               <div className="rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 aspect-video relative group">
                 <img 
@@ -178,7 +178,7 @@ const MindMapPage: React.FC = () => {
                   <button className="bg-white/90 p-2 rounded-full shadow-sm"><EditIcon className="h-4 w-4 text-slate-700"/></button>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {selectedNode?.description && (
               <div className="px-4 py-2">
