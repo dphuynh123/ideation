@@ -1,7 +1,7 @@
 export const translations = {
   en: {
     headerTitle: 'Ideation Engine',
-    headerDescription: 'Enter your interests and skills to generate a visual mindmap of potential problems and business ideas.',
+    headerDescription: 'Enter your targets and skills to generate a visual mindmap of potential problems and business ideas.',
     interestsLabel: 'Your Interests & Passions',
     interestsPlaceholder: 'e.g., sustainable living, vintage video games, gourmet coffee',
     skillsLabel: 'Your Skills & Expertise',
@@ -42,8 +42,8 @@ export const translations = {
   },
   vi: {
     headerTitle: 'Ideation Engine',
-    headerDescription: 'Nhập sở thích và kỹ năng của bạn để tạo sơ đồ tư duy trực quan về các vấn-đề tiềm năng và ý tưởng kinh doanh.',
-    interestsLabel: 'Sở thích & Đam mê của bạn',
+    headerDescription: 'Nhập mục tiêu/ đối tượng/ thị trường và kỹ năng của bạn để tạo sơ đồ tư duy trực quan về các vấn-đề tiềm năng và ý tưởng kinh doanh.',
+    interestsLabel: 'Mục tiêu/ đối tượng/ thị trường của bạn',
     interestsPlaceholder: 'VD: sống bền vững, trò chơi điện tử cổ điển, cà phê sành điệu',
     skillsLabel: 'Kỹ năng & Chuyên môn của bạn',
     skillsPlaceholder: 'VD: phát triển phần mềm, thiết kế đồ họa, viết nội dung, lập mô hình tài chính',

@@ -55,7 +55,7 @@ const Homepage: React.FC<HomepageProps> = ({ onGetStarted, t }) => {
                 </h1>
                 
                 <p className="text-lg text-gray-600 leading-relaxed max-w-md">
-                  Enter your interests or observations, and let our AI map out valid business problems and innovative solutions instantly.
+                  Enter your targets or observations, and let our AI map out valid business problems and innovative solutions instantly.
                 </p>
                 
                 <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -68,7 +68,7 @@ const Homepage: React.FC<HomepageProps> = ({ onGetStarted, t }) => {
                 onClick={onGetStarted}
                 className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-4 px-8 rounded-full text-lg transition shadow-lg hover:shadow-xl flex items-center gap-2"
               >
-                Generate Ideas
+                View Ideas
                 <span className="text-xl">→</span>
               </button>
               

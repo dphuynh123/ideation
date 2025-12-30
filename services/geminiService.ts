@@ -63,7 +63,7 @@ const createPrompt = (userInput: UserInput, language: 'en' | 'vi'): string => {
   const promptLabels = language === 'vi' ? {
       analyze: 'Phân tích hồ sơ người dùng sau đây để tạo sơ đồ tư duy ý tưởng kinh doanh. Tập trung vào việc xác định các vấn đề hữu hình và hình thành các giải pháp kinh doanh sáng tạo.',
       profile: 'Hồ sơ người dùng:',
-      interests: 'Sở thích & Đam mê',
+      interests: 'Mục tiêu hoặc đối tượng hoặc thị trường của bạn',
       skills: 'Kỹ năng & Chuyên môn',
       trends: 'Xu hướng thị trường quan sát được',
       notProvided: 'Không cung cấp',
@@ -73,7 +73,7 @@ const createPrompt = (userInput: UserInput, language: 'en' | 'vi'): string => {
   } : {
       analyze: 'Analyze the following user profile to generate a business idea mindmap. Focus on identifying tangible problems and conceiving innovative business solutions.',
       profile: 'User Profile:',
-      interests: 'Interests & Passions',
+      interests: 'Interests and Target',
       skills: 'Skills & Expertise',
       trends: 'Observed Market Trends',
       notProvided: 'Not provided',
