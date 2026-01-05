@@ -45,17 +45,19 @@ const MindMapPage: React.FC = () => {
   const [mindMapData, setMindMapData] = useState<MindMapData | null>(null);
   const [taskMindMapData, setTaskMindMapData] = useState<TaskMindMap[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [taskLoading, setIsTaskLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [language, setLanguage] = useState<'en' | 'vi'>('en');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isModalOpen, setIsModalOpen] = useState(true); // Start with modal open
-  
+
   const [selectedNode, setSelectedNode] = useState<SelectedNodeType>(null);
 
   const t = (key: keyof typeof translations.en) => translations[language][key] || key;
 
   const handleGenerate = async (userInput: UserInput) => {
     setIsLoading(true);
+    setIsTaskLoading(true);
     setError(null);
     setMindMapData(null);
     setIsModalOpen(false);
@@ -68,16 +70,14 @@ const MindMapPage: React.FC = () => {
         return await generateTaskMindMap(userInput.skills, idea.title, language, idea.id);
       }));
       const taskResults = await Promise.all(taskPromises.flat());
-      console.log(taskResults);
-      
       setTaskMindMapData(taskResults);
+      setIsTaskLoading(false);
 
     } catch (err) {
       console.error(err);
-      // setError(err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
-      setIsModalOpen(true);
     } finally {
       setIsLoading(false);
+      setIsTaskLoading(false);
     }
   };
 
@@ -86,8 +86,8 @@ const MindMapPage: React.FC = () => {
     if (id === null) {
       return;
     }
-    
-    setSelectedNode({ type, title, id, description, actionItems: taskMindMapData?.find(task => task.projectId === id)});
+
+    setSelectedNode({ type, title, id, description, actionItems: taskMindMapData?.find(task => task.projectId === id) });
   };
 
   const ThemeSwitcher = () => (
@@ -196,9 +196,7 @@ const MindMapPage: React.FC = () => {
             {/* <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg transition text-left">
               <EditIcon className="h-4 w-4 text-slate-500" /> {t('editNodeText')}
             </button> */}
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg transition text-left">
-              <FileTextIcon className="h-4 w-4 text-slate-500" /> {t('taskList')}
-            </button>
+
 
             {/* <div className="pt-4 pb-2 px-2">
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">{t('contextImage')}</p>
@@ -220,6 +218,16 @@ const MindMapPage: React.FC = () => {
                 <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{selectedNode.description}</p>
               </div>
             )}
+
+            <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg transition text-left">
+              <FileTextIcon className="h-4 w-4 text-slate-500" />
+              {taskLoading
+                ? <>
+                {" Generating task list"} < svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="animate-spin lucide lucide-loader-circle-icon lucide-loader-circle"><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg>
+                </>
+                : t('taskList')}
+
+            </button>
 
             <div className="flex-1 overflow-y-auto px-8 py-4 space-y-6">
               {selectedNode?.actionItems?.development_phases?.length > 0 && selectedNode.actionItems.development_phases.map((action, index) => (
@@ -276,30 +284,32 @@ const MindMapPage: React.FC = () => {
       </div>
 
       {/* Input Modal */}
-      {isModalOpen && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 dark:border-slate-700 scale-100 animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800">
-              <div>
-                <h2 className="text-xl font-bold  text-yellow-400">{t('headerTitle')}</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">{t('headerDescription')}</p>
-              </div>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                <XIcon className="h-6 w-6" />
-              </button>
-            </div>
-            <div className="p-6">
-              <InputForm onSubmit={handleGenerate} isLoading={isLoading} t={t} />
-              {error && (
-                <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 text-sm rounded-lg border border-red-100 dark:border-red-900/30">
-                  {error}
+      {
+        isModalOpen && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 dark:border-slate-700 scale-100 animate-in zoom-in-95 duration-200">
+              <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800">
+                <div>
+                  <h2 className="text-xl font-bold  text-yellow-400">{t('headerTitle')}</h2>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('headerDescription')}</p>
                 </div>
-              )}
+                <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                  <XIcon className="h-6 w-6" />
+                </button>
+              </div>
+              <div className="p-6">
+                <InputForm onSubmit={handleGenerate} isLoading={isLoading} t={t} />
+                {error && (
+                  <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 text-sm rounded-lg border border-red-100 dark:border-red-900/30">
+                    {error}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 };
 
