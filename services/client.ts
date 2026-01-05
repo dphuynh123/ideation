@@ -1,6 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ahphan.com/idea-app';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081/idea-app';
 
 export const apiClient = axios.create({
   baseURL: API_URL,

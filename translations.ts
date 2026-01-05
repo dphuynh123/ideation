@@ -39,6 +39,7 @@ export const translations = {
     zoomOut: 'Zoom Out',
     fitScreen: 'Fit to Screen',
     closeModal: 'Close',
+    taskList: 'Task List',
   },
   vi: {
     headerTitle: 'Ideation Engine',
@@ -80,5 +81,6 @@ export const translations = {
     zoomOut: 'Thu nhỏ',
     fitScreen: 'Vừa màn hình',
     closeModal: 'Đóng',
+    taskList: 'Danh sách công việc',
   },
 };

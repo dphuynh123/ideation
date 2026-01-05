@@ -2,26 +2,54 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InputForm from '../components/InputForm';
 import MindMapView from '../components/MindMapView';
-import type { MindMapData, UserInput } from '../types';
-import { 
-    LogoIcon, SparklesIcon, SunIcon, MoonIcon, PlusIcon, 
-    SettingsIcon, TrashIcon, EditIcon, PaletteIcon, FileTextIcon, 
-    HistoryIcon, XIcon
+import type { MindMapData, TaskMindMap, UserInput } from '../types';
+import {
+  LogoIcon, SparklesIcon, SunIcon, MoonIcon, PlusIcon,
+  SettingsIcon, TrashIcon, EditIcon, PaletteIcon, FileTextIcon,
+  HistoryIcon, XIcon,
+  ClockIcon,
+  LinkIcon,
+  TaskListIcon
 } from '../components/Icons';
 import { translations } from '../translations';
 import clsx from 'clsx';
-import { generateBusinessMindMap } from '@/services/geminiService';
+import { generateBusinessMindMap, generateTaskMindMap } from '@/services/geminiService';
 
-type SelectedNodeType = { type: 'central' | 'problem' | 'idea'; title: string; description?: string; id: string } | null;
+type SelectedNodeType = {
+  type: 'central' | 'problem' | 'idea';
+  title: string;
+  description?: string;
+  id: string;
+  actionItems?: TaskMindMap;
+} | null;
+
+
+// const CategoryBadge: React.FC<{ category: ActionItem }> = ({ category }) => {
+//     const styles = {
+//         RESEARCH: 'bg-blue-50 text-blue-600 border-blue-100',
+//         OUTREACH: 'bg-purple-50 text-purple-600 border-purple-100',
+//         FINANCE: 'bg-green-50 text-green-600 border-green-100',
+//         DEVELOPMENT: 'bg-amber-50 text-amber-600 border-amber-100',
+//         MARKETING: 'bg-rose-50 text-rose-600 border-rose-100',
+//     };
+
+//     return (
+//         <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border shadow-sm ${styles[category.phase]}`}>
+//             {category.phase}
+//         </span>
+//     );
+// };
 
 const MindMapPage: React.FC = () => {
   const navigate = useNavigate();
   const [mindMapData, setMindMapData] = useState<MindMapData | null>(null);
+  const [taskMindMapData, setTaskMindMapData] = useState<TaskMindMap[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [language, setLanguage] = useState<'en' | 'vi'>('en');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isModalOpen, setIsModalOpen] = useState(true); // Start with modal open
+  
   const [selectedNode, setSelectedNode] = useState<SelectedNodeType>(null);
 
   const t = (key: keyof typeof translations.en) => translations[language][key] || key;
@@ -34,11 +62,18 @@ const MindMapPage: React.FC = () => {
 
     try {
       const data = await generateBusinessMindMap(userInput, language);
-
       setMindMapData(data);
-      setSelectedNode({ type: 'central', title: data.centralTopic, id: 'central-topic' });
+      setIsLoading(false);
+      const taskPromises = data.problems.map((problem) => problem.businessIdeas.map(async (idea) => {
+        return await generateTaskMindMap(userInput.skills, idea.title, language, idea.id);
+      }));
+      const taskResults = await Promise.all(taskPromises.flat());
+      console.log(taskResults);
+      
+      setTaskMindMapData(taskResults);
+
     } catch (err) {
-      // console.error(err);
+      console.error(err);
       // setError(err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
       setIsModalOpen(true);
     } finally {
@@ -46,8 +81,13 @@ const MindMapPage: React.FC = () => {
     }
   };
 
-  const handleNodeClick = (type: 'central' | 'problem' | 'idea', title: string, id: string, description?: string) => {
-    setSelectedNode({ type, title, id, description });
+  const handleNodeClick = (type: 'central' | 'problem' | 'idea', title: string, id: string, description?: string,) => {
+
+    if (id === null) {
+      return;
+    }
+    
+    setSelectedNode({ type, title, id, description, actionItems: taskMindMapData?.find(task => task.projectId === id)});
   };
 
   const ThemeSwitcher = () => (
@@ -62,13 +102,13 @@ const MindMapPage: React.FC = () => {
 
   const LanguageSwitcher = () => (
     <div className="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
-      <button 
-        onClick={() => setLanguage('en')} 
+      <button
+        onClick={() => setLanguage('en')}
         className={`px-2 py-1 text-xs font-semibold rounded-md transition ${language === 'en' ? 'bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
       >
         EN
       </button>
-      <button 
+      <button
         onClick={() => setLanguage('vi')}
         className={`px-2 py-1 text-xs font-semibold rounded-md transition ${language === 'vi' ? 'bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
       >
@@ -80,17 +120,17 @@ const MindMapPage: React.FC = () => {
   return (
     <div className={clsx(`relative w-screen h-screen overflow-hidden bg-white ${theme == 'dark' && `dark:bg-slate-900`}  text-slate-900 dark:text-slate-100 font-sans selection:bg-yellow-200 dark:selection:bg-cyan-900`)}>
       {/* Dotted Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-40 " 
-           style={{
-               backgroundImage: `radial-gradient(#94a3b8 1px, transparent 1px)`, 
-               backgroundSize: '24px 24px' 
-           }} 
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-40 "
+        style={{
+          backgroundImage: `radial-gradient(#94a3b8 1px, transparent 1px)`,
+          backgroundSize: '24px 24px'
+        }}
       />
 
       {/* Header */}
       <header className={clsx(`absolute top-0 left-0 right-0 z-20 h-16 bg-white/80 ${theme == 'dark' && `dark:bg-slate-900/80`} backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-6`)}>
         <div className="flex items-center gap-2">
-          <button 
+          <button
             onClick={() => navigate('/home')}
             className="flex items-center gap-2 hover:opacity-80 transition"
           >
@@ -103,7 +143,7 @@ const MindMapPage: React.FC = () => {
 
         <div className="flex items-center gap-4">
           <LanguageSwitcher />
-          <ThemeSwitcher/>
+          <ThemeSwitcher />
           {/* <button className="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold py-2 px-5 rounded-full text-sm transition shadow-sm">
             {t('saveProject')}
           </button> */}
@@ -115,7 +155,7 @@ const MindMapPage: React.FC = () => {
 
       {/* Main Canvas Area */}
       <main className="absolute inset-0 pt-16 pb-20 z-10 overflow-hidden flex">
-        
+
         {/* Mind Map View (Left/Center) */}
         <div className="flex-1 relative h-full w-full overflow-hidden">
           {isLoading && (
@@ -124,7 +164,7 @@ const MindMapPage: React.FC = () => {
               <h2 className="text-lg font-semibold">{t('generatingButton')}</h2>
             </div>
           )}
-          
+
           {!isLoading && !mindMapData && !error && (
             <div className="absolute inset-0 flex flex-col items-center justify-center opacity-60">
               <div className="p-8 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl flex flex-col items-center max-w-md text-center">
@@ -139,7 +179,7 @@ const MindMapPage: React.FC = () => {
         </div>
 
         {/* Right Properties Panel (Floating) */}
-        <aside className={`absolute right-6 top-24 bottom-24 w-80 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 flex flex-col transition-transform duration-300 ${selectedNode ? 'translate-x-0' : 'translate-x-[120%]'}`}>
+        <aside className={` z-10 absolute w-[700px] right-6 top-24 bottom-24 w-80 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 flex flex-col transition-transform duration-300 ${selectedNode ? 'translate-x-0' : 'translate-x-[120%]'}`}>
           <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
             <div>
               <h3 className="font-bold text-slate-900 dark:text-white">{t('nodeProperties')}</h3>
@@ -153,17 +193,11 @@ const MindMapPage: React.FC = () => {
           </div>
 
           <div className="p-2 space-y-1 overflow-y-auto flex-1">
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg transition text-left">
+            {/* <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg transition text-left">
               <EditIcon className="h-4 w-4 text-slate-500" /> {t('editNodeText')}
-            </button>
+            </button> */}
             <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg transition text-left">
-              <PaletteIcon className="h-4 w-4 text-slate-500" /> {t('changeColor')}
-            </button>
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg transition text-left">
-              <FileTextIcon className="h-4 w-4 text-slate-500" /> {t('addNote')}
-            </button>
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg transition text-left">
-              <HistoryIcon className="h-4 w-4 text-slate-500" /> {t('versionHistory')}
+              <FileTextIcon className="h-4 w-4 text-slate-500" /> {t('taskList')}
             </button>
 
             {/* <div className="pt-4 pb-2 px-2">
@@ -186,27 +220,53 @@ const MindMapPage: React.FC = () => {
                 <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{selectedNode.description}</p>
               </div>
             )}
+
+            <div className="flex-1 overflow-y-auto px-8 py-4 space-y-6">
+              {selectedNode?.actionItems?.development_phases?.length > 0 && selectedNode.actionItems.development_phases.map((action, index) => (
+                <div className="group relative bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-[28px] p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors">
+                      {action.phase}
+                    </h3>
+                    {/* <CategoryBadge category={action.phase} /> */}
+                  </div>
+
+                  {
+                    action.tasks.map((taskItem, taskIndex) => (<p className="flex items-center text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">
+                      {/* {action.description} */}
+                      <TaskListIcon />
+                      <span className="text-xs text-slate-400 ml-2">{taskItem.task}</span>
+                      <span className="text-xs text-slate-400 ml-2">({taskItem.duration})</span>
+                    </p>))
+                  }
+
+                  <div className="pt-4 border-t border-slate-50 dark:border-slate-700/50 flex items-center gap-6">
+                    <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                      <ClockIcon className="h-4 w-4" />
+                      <span className="text-xs font-medium">{action.duration}</span>
+                    </div>
+                    {/* <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+                            <LinkIcon className="h-4 w-4" />
+                            <span className="text-xs font-medium">{action.resource}</span>
+                        </div> */}
+                  </div>
+                </div>
+              ))}
+            </div>
+
           </div>
 
           <div className="p-4 border-t border-slate-100 dark:border-slate-700 space-y-3 bg-slate-50/50 dark:bg-slate-800/50 rounded-b-2xl">
             <button className="w-full py-2.5 px-4 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold rounded-full text-sm shadow-sm transition flex items-center justify-center gap-2">
-              <PlusIcon className="h-4 w-4" /> {t('addChildNode')}
+              <PlusIcon className="h-4 w-4" /> {t('saveProject')}
             </button>
-            <div className="flex items-center justify-between gap-2">
-              <button className="flex-1 py-2 px-3 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-xs font-medium flex items-center justify-center gap-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition border border-transparent hover:border-slate-200 dark:hover:border-slate-600">
-                <SettingsIcon className="h-3.5 w-3.5" /> {t('settings')}
-              </button>
-              <button className="flex-1 py-2 px-3 text-red-500 hover:text-red-600 text-xs font-medium flex items-center justify-center gap-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition border border-transparent hover:border-red-100 dark:hover:border-red-900/30">
-                <TrashIcon className="h-3.5 w-3.5" /> {t('delete')}
-              </button>
-            </div>
           </div>
         </aside>
       </main>
 
       {/* Bottom Toolbar */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-4">
-        <button 
+        <button
           onClick={() => setIsModalOpen(true)}
           className="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold py-3 px-6 rounded-full shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition flex items-center gap-2"
         >

@@ -128,7 +128,7 @@ const MindMapView: React.FC<MindMapViewProps> = ({ data, t, onNodeClick, selecte
         <Node 
             id="central-topic" 
             isSelected={selectedNodeId === 'central-topic'}
-            onClick={() => onNodeClick('central', data.centralTopic, 'central-topic')}
+            onClick={() => onNodeClick('central', data.centralTopic, null)}
             className="bg-yellow-300 dark:bg-yellow-500 border border-yellow-400 dark:border-yellow-600 rounded-full py-4 px-8 shadow-lg min-w-[200px] max-w-md z-10"
         >
           <h2 className="text-xl font-bold text-slate-900 text-center leading-tight">{data.centralTopic}</h2>
@@ -144,7 +144,7 @@ const MindMapView: React.FC<MindMapViewProps> = ({ data, t, onNodeClick, selecte
                 <Node 
                     id={problemId} 
                     isSelected={selectedNodeId === problemId}
-                    onClick={() => onNodeClick('problem', problem.problemTitle, problemId)}
+                    onClick={() => onNodeClick('problem', problem.problemTitle, null)}
                     className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-full py-3 px-6 shadow-md min-w-[180px] max-w-xs z-10"
                 >
                     <p className="font-semibold text-slate-700 dark:text-slate-200 text-center">{problem.problemTitle}</p>
@@ -159,7 +159,7 @@ const MindMapView: React.FC<MindMapViewProps> = ({ data, t, onNodeClick, selecte
                                 key={bIndex} 
                                 id={ideaId} 
                                 isSelected={selectedNodeId === ideaId}
-                                onClick={() => onNodeClick('idea', idea.title, ideaId, idea.description)}
+                                onClick={() => onNodeClick('idea', idea.title, idea.id, idea.description)}
                                 className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/80 rounded-2xl p-4 shadow-sm hover:shadow-md min-w-[220px] max-w-[260px] text-left group"
                             >
                                 <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100 mb-1 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">{idea.title}</h4>

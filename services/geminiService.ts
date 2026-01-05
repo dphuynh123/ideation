@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import type { MindMapData, UserInput } from '../types';
+import type { MindMapData, TaskMindMap, UserInput } from '../types';
 import apiClient from "./client";
 
 // IMPORTANT: Do not expose this key publicly.
@@ -61,25 +61,25 @@ const createPrompt = (userInput: UserInput, language: 'en' | 'vi'): string => {
   const { interests, skills, marketTrends } = userInput;
 
   const promptLabels = language === 'vi' ? {
-      analyze: 'Phân tích hồ sơ người dùng sau đây để tạo sơ đồ tư duy ý tưởng kinh doanh. Tập trung vào việc xác định các vấn đề hữu hình và hình thành các giải pháp kinh doanh sáng tạo.',
-      profile: 'Hồ sơ người dùng:',
-      interests: 'Mục tiêu hoặc đối tượng hoặc thị trường của bạn',
-      skills: 'Kỹ năng & Chuyên môn',
-      trends: 'Xu hướng thị trường quan sát được',
-      notProvided: 'Không cung cấp',
-      instruction: 'Dựa trên hồ sơ này, vui lòng tạo một sơ đồ tư duy có cấu trúc. Bắt đầu với một chủ đề trung tâm tổng hợp các thông tin đầu vào của người dùng. Sau đó, xác định 3-4 vấn đề riêng biệt trong chủ đề đó. Đối với mỗi vấn đề, hãy động não 2-3 ý tưởng kinh doanh độc đáo đóng vai trò là giải pháp.',
-      outputFormat: 'Đầu ra phải là một đối tượng JSON hợp lệ khớp với lược đồ được cung cấp.',
-      languageInstruction: 'Toàn bộ đầu ra, bao gồm tất cả các chủ đề, tiêu đề và mô tả, phải bằng tiếng Việt.'
+    analyze: 'Phân tích hồ sơ người dùng sau đây để tạo sơ đồ tư duy ý tưởng kinh doanh. Tập trung vào việc xác định các vấn đề hữu hình và hình thành các giải pháp kinh doanh sáng tạo.',
+    profile: 'Hồ sơ người dùng:',
+    interests: 'Mục tiêu hoặc đối tượng hoặc thị trường của bạn',
+    skills: 'Kỹ năng & Chuyên môn',
+    trends: 'Xu hướng thị trường quan sát được',
+    notProvided: 'Không cung cấp',
+    instruction: 'Dựa trên hồ sơ này, vui lòng tạo một sơ đồ tư duy có cấu trúc. Bắt đầu với một chủ đề trung tâm tổng hợp các thông tin đầu vào của người dùng. Sau đó, xác định 3-4 vấn đề riêng biệt trong chủ đề đó. Đối với mỗi vấn đề, hãy động não 2-3 ý tưởng kinh doanh độc đáo đóng vai trò là giải pháp.',
+    outputFormat: 'Đầu ra phải là một đối tượng JSON hợp lệ khớp với lược đồ được cung cấp.',
+    languageInstruction: 'Toàn bộ đầu ra, bao gồm tất cả các chủ đề, tiêu đề và mô tả, phải bằng tiếng Việt.'
   } : {
-      analyze: 'Analyze the following user profile to generate a business idea mindmap. Focus on identifying tangible problems and conceiving innovative business solutions.',
-      profile: 'User Profile:',
-      interests: 'Interests and Target',
-      skills: 'Skills & Expertise',
-      trends: 'Observed Market Trends',
-      notProvided: 'Not provided',
-      instruction: 'Based on this profile, please generate a structured mindmap. Start with a central topic that synthesizes the user\'s inputs. Then, identify 3-4 distinct problems within that topic. For each problem, brainstorm 2-3 unique business ideas that act as solutions.',
-      outputFormat: 'The output must be a valid JSON object matching the provided schema.',
-      languageInstruction: ''
+    analyze: 'Analyze the following user profile to generate a business idea mindmap. Focus on identifying tangible problems and conceiving innovative business solutions.',
+    profile: 'User Profile:',
+    interests: 'Interests and Target',
+    skills: 'Skills & Expertise',
+    trends: 'Observed Market Trends',
+    notProvided: 'Not provided',
+    instruction: 'Based on this profile, please generate a structured mindmap. Start with a central topic that synthesizes the user\'s inputs. Then, identify 3-4 distinct problems within that topic. For each problem, brainstorm 2-3 unique business ideas that act as solutions.',
+    outputFormat: 'The output must be a valid JSON object matching the provided schema.',
+    languageInstruction: ''
   };
 
   let prompt = `${promptLabels.analyze}
@@ -107,34 +107,46 @@ export const generateBusinessMindMap = async (userInput: UserInput, language: 'e
   const prompt = createPrompt(userInput, language);
 
   try {
-    // const response = await ai.models.generateContent({
-    //     model: "gemini-2.5-flash",
-    //     contents: prompt,
-    //     config: {
-    //         responseMimeType: "application/json",
-    //         responseSchema: mindMapSchema,
-    //         temperature: 0.8,
-    //         topP: 0.95,
-    //     },
-    // });
 
-    const response = await apiClient.post("/gen",{prompt:prompt,responseSchema:mindMapSchema})
+    const response = await apiClient.post("/gen", { prompt: prompt, responseSchema: mindMapSchema })
 
     return response.data
 
-    // const jsonText = response.text;
-    // if (!jsonText) {
-    //     throw new Error("Received an empty response from the API.");
-    // }
-    
-    // // The response text should already be a valid JSON string
-    // return JSON.parse(jsonText) as MindMapData;
-
   } catch (error) {
     console.error("Error calling Gemini API:", error);
-    if(error instanceof Error && error.message.includes('json')){
-        throw new Error("Failed to generate a valid mindmap structure. The AI's response was not in the expected format. Please try again with a different input.");
+    if (error instanceof Error && error.message.includes('json')) {
+      throw new Error("Failed to generate a valid mindmap structure. The AI's response was not in the expected format. Please try again with a different input.");
     }
     throw new Error("An error occurred while generating business ideas. Please check your connection and API key.");
   }
 };
+
+
+const createTaskPrompt = (skill: string, idea: string, language: 'en' | 'vi'): string => {
+  const promptLabels = language === 'vi' ? "Bạn là: " : "You're: "
+  const idealabel = language === 'vi' ? "Ý tưởng nghiệp vụ là: " : "Business Ideas is"
+  const require = language === 'vi' ? "Bạn hãy tạo cho tôi danh sách chi tiết các công việc cần phải làm và thời gian để hoàn thành những công việc đó, Kết quả đầu ra phải là một đối tượng JSON hợp lệ phù hợp với lược đồ được cung cấp." 
+  : "Please create a detailed list of tasks that need to be done and the time required to complete them , The output must be a valid JSON object matching the provided schema"
+
+  let prompts = `${promptLabels} ${skill}
+  ${idealabel} ${idea}
+  ${require}
+  `
+  return prompts
+}
+
+export const generateTaskMindMap = async (skill: string , idea: string, language: 'en' | 'vi', projectId: string): Promise<TaskMindMap> => {
+
+  let prompt = createTaskPrompt(skill, idea , language)
+  try {
+    const response = await apiClient.post("/gen/task", { prompt: prompt, projectId: projectId })
+    return response.data
+  } catch (error) {
+    console.error("Error calling Gemini API:", error);
+    if (error instanceof Error && error.message.includes('json')) {
+      throw new Error("Failed to generate a valid mindmap structure. The AI's response was not in the expected format. Please try again with a different input.");
+    }
+    throw new Error("An error occurred while generating business ideas. Please check your connection and API key.");
+  }
+
+}
